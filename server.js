@@ -63,11 +63,12 @@ io.on("connection", (socket) => {
 //middleware
 app.use(express.json({ limit: "4mb" })); // to handle large data
 app.use(cors({
-    origin: "https://chat-frontend-latest-cqvh.vercel.app", // your frontend
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allow all common methods
-    credentials: true, // required if you're sending cookies/tokens
-    allowedHeaders: ["Content-Type", "Authorization"] // allow necessary headers
+  origin: "*",  // allow all origins
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
 
 // Serve socket.io client files (fixes 404 error)
 app.use('/socket.io/socket.io.js', express.static(process.cwd() + '/node_modules/socket.io-client/dist/socket.io.js'));
