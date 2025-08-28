@@ -15,17 +15,17 @@ const server = http.createServer(app);
 //initialize socket.io server with proper configuration
 export const io = new Server(server, {
     cors: {
-        origin: "*", // allow all origins
-        methods: ["*"], // allow all methods (GET, POST, PUT, DELETE, etc.)
-        credentials: true,
-        allowedHeaders: ["*"] // allow all headers
+        origin: "https://chat-frontend-latest-cqvh.vercel.app", // your frontend
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allow all common methods
+        credentials: true, // required if you're sending cookies/tokens
+        allowedHeaders: ["Content-Type", "Authorization"] // allow necessary headers
     },
-
-    transports: ['websocket', 'polling'],
+    transports: ["websocket", "polling"],
     allowEIO3: true, // Allow Engine.IO v3 clients
     pingTimeout: 60000,
     pingInterval: 25000
 });
+
 
 //stores online users
 export const userSocketMap = {}; //{userId: socketId}
