@@ -12,15 +12,14 @@ import { Server } from 'socket.io';
 const app = express();
 const server = http.createServer(app);
 
+
 //initialize socket.io server with proper configuration
 export const io = new Server(server, {
     cors: {
-        origin: [
-            "http://localhost:5173",
-            "https://chat-frontend-latest-cqvh.vercel.app"
-        ], methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allow all common methods
+        origin: "*"
+        , methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // allow all common methods
         credentials: true, // required if you're sending cookies/tokens
-        allowedHeaders: ["Content-Type", "Authorization"] // allow necessary headers
+        allowedHeaders: ["Content-Type", "Authorization", "token"], // allow necessary headers
     },
     transports: ["websocket", "polling"],
     allowEIO3: true, // Allow Engine.IO v3 clients
@@ -65,13 +64,10 @@ io.on("connection", (socket) => {
 //middleware
 app.use(express.json({ limit: "4mb" })); // to handle large data
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://chat-frontend-latest-cqvh.vercel.app"
-    ],
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization", "token"],
 }));
 
 
