@@ -40,25 +40,49 @@ export const signup = async (req, res) => {
 
 //controller to login user
 export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-    try {
-
-        const { email, password } = req.body;
-        const userData = await User.findOne({ email });
-        const isPasswordCorrect = await bcrypt.compare(password, userData.password);
-
-        if (!userData || !isPasswordCorrect) {
-            return res.json({ success: false, message: "Invalid Credentials" });
-        }
-
-       const token = generateToken(userData._id);
-        res.json({ success: true, userData, message: "Login Successfull", token }); 
-
-    } catch (error) {
-        console.error(error.message);
-        res.json({ success: false, message: "Error logging in", error: error.message });
+    // check if fields are provided
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "Email and password are required" });
     }
-}
+
+    const userData = await User.findOne({ email });
+
+    // check if user exists
+    if (!userData) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    // check password
+    const isPasswordCorrect = await bcrypt.compare(password, userData.password);
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    // generate token
+    const token = generateToken(userData._id);
+
+    // send response
+    res.json({
+      success: true,
+      message: "Login Successful",
+      token,
+      userData: {
+        _id: userData._id,
+        fullName: userData.fullName,
+        email: userData.email,
+        bio: userData.bio,
+        profilePic: userData.profilePic,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error.message);
+    res.status(500).json({ success: false, message: "Error logging in", error: error.message });
+  }
+};
+
 
 //controller to check if user is authenticated
 export const checkAuth = (req, res) => {
